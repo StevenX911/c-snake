@@ -10,17 +10,17 @@
 #define RIGHT 2
 #define LEFT -2
 
-struct Snack //定义贪吃蛇结点结构体
+struct Snake //定义贪吃蛇结点结构体
 {
     int hang;
     int lie;
-    struct Snack *next;
+    struct Snake *next;
 };
 
-struct Snack Food; //定义食物结构体
+struct Snake Food; //定义食物结构体
 
-struct Snack *head = NULL; //定义一个蛇头指针
-struct Snack *tail = NULL; //定义一个蛇尾指针
+struct Snake *head = NULL; //定义一个蛇头指针
+struct Snake *tail = NULL; //定义一个蛇尾指针
 int key;                   //记录键入的值 ChangeDir()函数中使用到
 int Dir;                   //记录方向的值 AddNode()函数中使用到
 
@@ -43,9 +43,9 @@ void InitFood()
 
 //判断是否是蛇身结点函数
 //(判断扫描传过来的i,j是否是蛇体结点中的hang，lie。如果是就返回1，GamePic()函数会将其打印 )
-int HasSnackNode(int i, int j)
+int HasSnakeNode(int i, int j)
 {
-    struct Snack *p;
+    struct Snake *p;
     p = head;
     while (p) //循环扫描蛇的链表
     {
@@ -94,7 +94,7 @@ void GamePic()
                 {
                     printw("|");
                 }
-                else if (HasSnackNode(hang, lie)) //如果行，列正好是蛇身结点中的行列。就将其打印
+                else if (HasSnakeNode(hang, lie)) //如果行，列正好是蛇身结点中的行列。就将其打印
                 {
                     printw("[]");
                 }
@@ -112,7 +112,7 @@ void GamePic()
                 printw("--");
             }
             printw("\n");
-            printw("By Hupeiyu,%d\n", key);
+            printw("By StevenX911,%d\n", key);
         }
     }
 }
@@ -120,7 +120,7 @@ void GamePic()
 //增加节点函数
 void AddNode()
 {
-    struct Snack *new = (struct Snack *)malloc(sizeof(struct Snack));
+    struct Snake *new = (struct Snake *)malloc(sizeof(struct Snake));
     new->next = NULL;
     switch (Dir) //根据键入的值来增加结点 ，修改tail所指结点中hang，lie并将修改后的值赋值给新结点
     {
@@ -148,7 +148,7 @@ void AddNode()
 //删除结点函数
 void DeleteNode()
 {
-    struct Snack *p; //删除头结点
+    struct Snake *p; //删除头结点
     p = head;
     head = head->next;
     free(p);
@@ -156,11 +156,11 @@ void DeleteNode()
 
 //-------------------------------------------------------------------
 //初始化一条蛇
-void InitSnack()
+void InitSnake()
 {
     Dir = RIGHT; //初始方向为RIGHT
 
-    struct Snack *p;
+    struct Snake *p;
     p = head;
     while (p) //判断蛇是否为空，清理空间
     {
@@ -171,7 +171,7 @@ void InitSnack()
 
     InitFood(); //初始化食物位置
 
-    head = (struct Snack *)malloc(sizeof(struct Snack));
+    head = (struct Snake *)malloc(sizeof(struct Snake));
     head->hang = 2;
     head->lie = 2;
     head->next = NULL;
@@ -182,9 +182,9 @@ void InitSnack()
 }
 
 //判断蛇如何死掉重新开始函数
-int IfSnackDie()
+int IfSnakeDie()
 {
-    struct Snack *p;
+    struct Snake *p;
     p = head;
     if (tail->hang == 0 || tail->lie == 0 || tail->hang == 19 || tail->lie == 20) //当尾指针所指结点中数据到达最大边界return 1
     {
@@ -202,7 +202,7 @@ int IfSnackDie()
 }
 
 //蛇移动函数 (本质就是增加新结点删除最后结点)
-void MoveSnack()
+void MoveSnake()
 {
     AddNode(); //增加新结点
 
@@ -215,9 +215,9 @@ void MoveSnack()
         DeleteNode();
     }
 
-    if (IfSnackDie()) //如果tail遇到边界或撞到自己就初始化蛇
+    if (IfSnakeDie()) //如果tail遇到边界或撞到自己就初始化蛇
     {
-        InitSnack();
+        InitSnake();
     }
 }
 
@@ -226,7 +226,7 @@ void *RefreshPic()
 {
     while (1) //不停的刷新页面
     {
-        MoveSnack();
+        MoveSnake();
         GamePic();
         refresh();      //刷新页面，在页面输出时必须刷新才可以显示
         usleep(100000); //以微秒为单位 ，100毫秒睡眠一次 ，执行挂起不动
@@ -275,7 +275,7 @@ int main()
 
     InitNcurse(); //初始化ncurse
 
-    InitSnack(); //初始化蛇
+    InitSnake(); //初始化蛇
 
     GamePic(); //初始化打印界面
 
